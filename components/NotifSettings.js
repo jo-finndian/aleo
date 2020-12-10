@@ -4,8 +4,10 @@ import Slider from '@react-native-community/slider';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HsvColorPicker from 'react-native-hsv-color-picker';
 import EStyleSheet, { create } from 'react-native-extended-stylesheet';
+import io from "socket.io-client";
 
 export default function NotifSettings({ props }) {
+    const [socketIo, setSocketIo] = useState();
     const [value, setValue] = useState(value); //brightness
     const [colorHue, setColorHue] = useState(0);
     const [colorSat, setColorSat] = useState(0);
@@ -65,8 +67,16 @@ export default function NotifSettings({ props }) {
         var s = Math.floor(lightColor.saturation * 100)
         var l = Math.floor(lightColor.value*100)/2
         var lightColorStr = JSON.stringify(h + "," + s + "," + l)
-
         updateHueAsyncStorage(lightColorStr);
+
+        l /= 100;
+        const a = s * Math.min(l, 1 - l) / 100;
+        const f = n => {
+            const k = (n + h / 30) % 12;
+            const coolor = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * coolor).toString(16).padStart(2, '0'); 
+        };
+        socketIo.emit("color", { status: `#${f(0)}${f(8)}${f(4)}` });
     }
 
     const showColorPicker = () => {
@@ -174,7 +184,13 @@ export default function NotifSettings({ props }) {
 
     useEffect(() => {
         fetchInfo();
-    }, []);
+        setSocketIo(
+          io("ws://localhost:3000", {
+            reconnectionDelayMax: 10000,
+          })
+        );
+        
+      }, []);
     
     return (
     <KeyboardAvoidingView style={styles.keyboard} behavior="position" enabled>
@@ -201,6 +217,7 @@ export default function NotifSettings({ props }) {
                     <Slider
                         value={value}
                         onValueChange={(val) => brightnessValueHandler(val)}
+                        onSlidingComplete={() => socketIo.emit("brightness", { status: value.toString() })}
                         style={styles.slider}
                         minimumValue={0}
                         maximumValue={100}

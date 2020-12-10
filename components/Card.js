@@ -5,8 +5,10 @@ import Slider from '@react-native-community/slider';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HsvColorPicker from 'react-native-hsv-color-picker';
 import EStyleSheet, { create } from 'react-native-extended-stylesheet';
-    
+import io from "socket.io-client";
+
 const SettingCard = ( props ) => {
+    const [socketIo, setSocketIo] = useState();
     const [enableiCal, setEnableiCal] = useState();
     const [enableText, setEnableText] = useState();
     const [enablePhone, setEnablePhone] = useState();
@@ -78,13 +80,16 @@ const SettingCard = ( props ) => {
     const onPatternChange = (pattern) => {
         if (props.id == 'text') {
             setLightPatternText(pattern);
+            socketIo.emit("pattern", { status: pattern });
         }
         else if (props.id == 'phone') {
             setLightPatternPhone(pattern);
+            socketIo.emit("pattern", { status: pattern });
         }
 
         if (props.id == 'ical') {
             setLightPatterniCal(pattern);
+            socketIo.emit("pattern", { status: pattern });
         }
 
         updateLightPatternAsyncStorage(pattern);
@@ -97,6 +102,16 @@ const SettingCard = ( props ) => {
         var lightColorStr = JSON.stringify(h + "," + s + "," + l)
 
         updateLightColorAsyncStorage(lightColorStr);
+
+        l /= 100;
+        const a = s * Math.min(l, 1 - l) / 100;
+        const f = n => {
+            const k = (n + h / 30) % 12;
+            const coolor = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            return Math.round(255 * coolor).toString(16).padStart(2, '0'); 
+        };
+        socketIo.emit("color", { status: `#${f(0)}${f(8)}${f(4)}` });
+        // socketIo.emit("color", { status: lightColorStr });
     }
 
     const showColorPicker = () => {
@@ -211,7 +226,13 @@ const SettingCard = ( props ) => {
     }
 
     useEffect(() => {
-    }, []);
+        setSocketIo(
+          io("ws://localhost:3000", {
+            reconnectionDelayMax: 10000,
+          })
+        );
+        
+      }, []);
     fetchInfo();
     
 
@@ -239,6 +260,7 @@ const SettingCard = ( props ) => {
                 <Slider
                     value={value}
                     onValueChange={(val) => brightnessValueHandler(val)}
+                    onSlidingComplete={() => socketIo.emit("brightness", { status: value.toString() })}
                     style={styles.slider}
                     minimumValue={0}
                     maximumValue={100}
@@ -299,23 +321,17 @@ const SettingCard = ( props ) => {
                 <View style={styles.innerRow}>
                     <TouchableOpacity
                         style={(props.id == 'text' && lightPatternText == "Blink") ? styles.inputSelected : (props.id == 'phone' && lightPatternPhone == "Blink") ? styles.inputSelected : (props.id == 'ical' && lightPatterniCal == "Blink") ? styles.inputSelected : styles.inputSm }
-                        onPress={()=> {
-                            onPatternChange("Blink")
-                        }}>
+                        onPress={()=> { onPatternChange("blink") }}>
                             <Text>Blink</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={(props.id == 'text' && lightPatternText == "Rainbow") ? styles.inputSelected : (props.id == 'phone' && lightPatternPhone == "Rainbow") ? styles.inputSelected : (props.id == 'ical' && lightPatterniCal == "Rainbow") ? styles.inputSelected : styles.inputSm}
-                        onPress={()=> {
-                            onPatternChange("Rainbow")
-                        }}>
+                        onPress={()=> { onPatternChange("rainbow") }}>
                             <Text>Rainbow</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={(props.id == 'text' && lightPatternText == "Pulse") ? styles.inputSelected : (props.id == 'phone' && lightPatternPhone == "Pulse") ? styles.inputSelected : (props.id == 'ical' && lightPatterniCal == "Pulse") ? styles.inputSelected : styles.inputSm}
-                        onPress={()=> {
-                            onPatternChange("Pulse");
-                        }}>
+                        onPress={()=> { onPatternChange("pulse") }}>
                             <Text>Pulse</Text>
                     </TouchableOpacity>
                 </View>
