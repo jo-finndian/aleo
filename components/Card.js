@@ -111,7 +111,6 @@ const SettingCard = ( props ) => {
             return Math.round(255 * coolor).toString(16).padStart(2, '0'); 
         };
         socketIo.emit("color", { status: `#${f(0)}${f(8)}${f(4)}` });
-        // socketIo.emit("color", { status: lightColorStr });
     }
 
     const showColorPicker = () => {
