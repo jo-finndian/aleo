@@ -39,7 +39,8 @@
     "react-native-screens": "~2.10.1",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
-    "react-native-webview": "10.7.0"
+    "react-native-webview": "^11.0.2",
+    "socket.io-client": "^3.0.4"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
