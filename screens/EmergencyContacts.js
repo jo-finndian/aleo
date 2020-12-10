@@ -13,6 +13,7 @@ import firebase from "firebase";
 import "@firebase/firestore";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Contacts from 'expo-contacts';
+import * as SMS from 'expo-sms';
 
 const ERContacts = ({ navigation }) => {
   const [contacts, setContactList] = useState([]);
@@ -31,7 +32,7 @@ const ERContacts = ({ navigation }) => {
       })
       console.log(list);
       setContactList(list);
-
+      
       setTimeout(() => {
         setLoading(false);
       }, 600);
@@ -51,26 +52,28 @@ const ERContacts = ({ navigation }) => {
       getContactData(user.uid);
   }
 
-  const updateContact = () => {
-    console.log('updated')
-  }
-
+  // const updateContact = () => {
+  //   console.log('updated')
+  // }
+  
   const deleteAlert = (contact) => {
     Alert.alert(
       "Remove Contact",
-      `Do you want to delete ${contact} from your contacts?`,
+      `Do you want to delete ${contact[1].name} from your contacts?`,
       [
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "Delete", onPress: () => deleteContact(contact) }
+        { text: "Delete", onPress: () => deleteContact(contact[0]) }
       ],
       { cancelable: false }
     );
   }
 
+  // imports contacts successfully, but creating a contact list viewer was not within the scope of this project
+  // should we continue developing this prject next semester, this will be completed
   async function importContact() {
     const { data } = await Contacts.getContactsAsync({
     });
@@ -82,6 +85,28 @@ const ERContacts = ({ navigation }) => {
     
   }
 
+  async function sendSMS() {
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+      const { result } = await SMS.sendSMSAsync(
+      // do your SMS stuff here
+        ['0123456789'], // phone number(s)
+        'Hi, I\'m not feeling safe. Can you call me please?', // message
+        {
+          attachments: {
+            // add attachments here
+            // uri: 'path/myfile.png',
+            // mimeType: 'image/png',
+            // filename: 'myfile.png',
+          },
+        }
+      );
+      console.log('sms available')
+    } else {
+      // misfortune... there's no SMS available on this device
+      console.log('sms not avialable')
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -135,19 +160,25 @@ const ERContacts = ({ navigation }) => {
             </View>
             <View style={styles.row}>
               <TouchableOpacity
-                onPress={()=>{deleteAlert(contact[0])}}>
+                onPress={()=>{deleteAlert(contact)}}>
                 <MaterialIcons name="delete" size={24} color="#0D3416" style={{marginRight: 15}}/>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={updateContact}>
                 <MaterialIcons name="mode-edit" size={24} color="#0D3416" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         ))}
       </ScrollView>
 
       <View style={styles.section}>
+        <TouchableOpacity
+        style={[styles.button, styles.buttonFill, styles.row]}
+          onPress={sendSMS}
+        >
+          <Text style={styles.buttonText}>Send Message</Text>
+        </TouchableOpacity>
         <TouchableOpacity
         style={[styles.button, styles.buttonFill, styles.row]}
           onPress={importContact}

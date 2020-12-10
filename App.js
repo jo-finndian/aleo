@@ -30,137 +30,137 @@ EStyleSheet.build({ // always call EStyleSheet.build() even if you don't use glo
   $borderRad: 4,
 });
 
-  // FIREBASE
-  const firebaseConfig = {
-    apiKey: "AIzaSyB8JuBeYg89lGZjgBLxFp6x90CGIsaghU0",
-    authDomain: "smannila-7be39.firebaseapp.com",
-    databaseURL: "https://smannila-7be39.firebaseio.com",
-    projectId: "smannila-7be39",
-    storageBucket: "smannila-7be39.appspot.com",
-    messagingSenderId: "259311576564",
-    appId: "1:259311576564:web:7fc11b29038d6f8d4b05a1",
-    measurementId: "G-X7P36WMSDN"
-  };
+// FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyB8JuBeYg89lGZjgBLxFp6x90CGIsaghU0",
+  authDomain: "smannila-7be39.firebaseapp.com",
+  databaseURL: "https://smannila-7be39.firebaseio.com",
+  projectId: "smannila-7be39",
+  storageBucket: "smannila-7be39.appspot.com",
+  messagingSenderId: "259311576564",
+  appId: "1:259311576564:web:7fc11b29038d6f8d4b05a1",
+  measurementId: "G-X7P36WMSDN"
+};
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-  const AppStack = createStackNavigator();
-  const TabStack = createBottomTabNavigator();
+const AppStack = createStackNavigator();
+const TabStack = createBottomTabNavigator();
 
 const HomeStackNavigator = () => { //Import the other screens you use!
-    return(
-     <AppStack.Navigator>
-      <AppStack.Screen name="Home" component={BottomTabNavigator} 
-        options={{
-          headerShown: false
-        }}/>
-      <AppStack.Screen
-        name="Interior Lighting Settings"
-        component={IntLightingSettings} 
-        options={{
-          title: 'Interior Light',
-          headerStyle: {
-            backgroundColor: '#0D3416',
-            height: 160,
-            shadowColor: 'transparent',
-          },
-          headerTintColor: '#0D3416',
-          headerLeftContainerStyle: {
-            backgroundColor: '#D0BC92',
-            borderRadius: 30,
-            height: 30,
-            width: 30,
-            marginLeft: 10,
-          },
-          headerBackTitleVisible: false,
-          headerTitleStyle: {
-            marginTop: 80,
-            fontWeight: '400',
-            fontSize: 30,
-            color: '#D6AF5F',
-          },
-        }} />
-      <AppStack.Screen
-        name="Notification Light Settings"
-        component={NotifLightSettings} 
-        options={{
-          title: 'Notification Lights',
-          headerStyle: {
-            backgroundColor: '#0D3416',
-            height: 160,
-            shadowColor: 'transparent',
-          },
-          headerTintColor: '#0D3416',
-          headerLeftContainerStyle: {
-            backgroundColor: '#D0BC92',
-            borderRadius: 30,
-            height: 30,
-            width: 30,
-            marginLeft: 10,
-          },
-          headerBackTitleVisible: false,
-          headerTitleStyle: {
-            marginTop: 80,
-            fontWeight: '400',
-            fontSize: 30,
-            color: '#D6AF5F',
-          },
-        }} />
-      <AppStack.Screen
-        name="Emergency Contacts"
-        component={EmergencyContacts} 
-        options={{
-          title: 'Emergency Contacts',
-          headerStyle: {
-            backgroundColor: '#0D3416',
-            height: 160,
-            shadowColor: 'transparent',
-          },
-          headerTintColor: '#0D3416',
-          headerLeftContainerStyle: {
-            backgroundColor: '#D0BC92',
-            borderRadius: 30,
-            height: 30,
-            width: 30,
-            marginLeft: 10,
-          },
-          headerBackTitleVisible: false,
-          headerTitleStyle: {
-            marginTop: 80,
-            fontWeight: '400',
-            fontSize: 30,
-            color: '#D6AF5F',
-          },
-        }} />
-      <AppStack.Screen
-       name="AddContacts"
-       component={AddContacts} 
-       options={{
-         title: 'New Contact',
-         headerStyle: {
-           backgroundColor: '#0D3416',
-           height: 160,
-           shadowColor: 'transparent',
-         },
-         headerTintColor: '#0D3416',
-         headerLeftContainerStyle: {
-           backgroundColor: '#D0BC92',
-           borderRadius: 30,
-           height: 30,
-           width: 30,
-           marginLeft: 10,
-         },
-         headerBackTitleVisible: false,
-         headerTitleStyle: {
-           marginTop: 80,
-           fontWeight: '400',
-           fontSize: 30,
-           color: '#D6AF5F',
-         },
-       }} />
-     </AppStack.Navigator>
+  return(
+    <AppStack.Navigator>
+    <AppStack.Screen name="Home" component={BottomTabNavigator} 
+      options={{
+        headerShown: false
+      }}/>
+    <AppStack.Screen
+      name="Interior Lighting Settings"
+      component={IntLightingSettings} 
+      options={{
+        title: 'Interior Light',
+        headerStyle: {
+          backgroundColor: '#0D3416',
+          height: 160,
+          shadowColor: 'transparent',
+        },
+        headerTintColor: '#0D3416',
+        headerLeftContainerStyle: {
+          backgroundColor: '#D0BC92',
+          borderRadius: 30,
+          height: 30,
+          width: 30,
+          marginLeft: 10,
+        },
+        headerBackTitleVisible: false,
+        headerTitleStyle: {
+          marginTop: 80,
+          fontWeight: '400',
+          fontSize: 30,
+          color: '#D6AF5F',
+        },
+      }} />
+    <AppStack.Screen
+      name="Notification Light Settings"
+      component={NotifLightSettings} 
+      options={{
+        title: 'Notification Lights',
+        headerStyle: {
+          backgroundColor: '#0D3416',
+          height: 160,
+          shadowColor: 'transparent',
+        },
+        headerTintColor: '#0D3416',
+        headerLeftContainerStyle: {
+          backgroundColor: '#D0BC92',
+          borderRadius: 30,
+          height: 30,
+          width: 30,
+          marginLeft: 10,
+        },
+        headerBackTitleVisible: false,
+        headerTitleStyle: {
+          marginTop: 80,
+          fontWeight: '400',
+          fontSize: 30,
+          color: '#D6AF5F',
+        },
+      }} />
+    <AppStack.Screen
+      name="Emergency Contacts"
+      component={EmergencyContacts} 
+      options={{
+        title: 'Emergency Contacts',
+        headerStyle: {
+          backgroundColor: '#0D3416',
+          height: 160,
+          shadowColor: 'transparent',
+        },
+        headerTintColor: '#0D3416',
+        headerLeftContainerStyle: {
+          backgroundColor: '#D0BC92',
+          borderRadius: 30,
+          height: 30,
+          width: 30,
+          marginLeft: 10,
+        },
+        headerBackTitleVisible: false,
+        headerTitleStyle: {
+          marginTop: 80,
+          fontWeight: '400',
+          fontSize: 30,
+          color: '#D6AF5F',
+        },
+      }} />
+    <AppStack.Screen
+      name="AddContacts"
+      component={AddContacts} 
+      options={{
+        title: 'New Contact',
+        headerStyle: {
+          backgroundColor: '#0D3416',
+          height: 160,
+          shadowColor: 'transparent',
+        },
+        headerTintColor: '#0D3416',
+        headerLeftContainerStyle: {
+          backgroundColor: '#D0BC92',
+          borderRadius: 30,
+          height: 30,
+          width: 30,
+          marginLeft: 10,
+        },
+        headerBackTitleVisible: false,
+        headerTitleStyle: {
+          marginTop: 80,
+          fontWeight: '400',
+          fontSize: 30,
+          color: '#D6AF5F',
+        },
+      }} />
+    </AppStack.Navigator>
   )
 }
 
