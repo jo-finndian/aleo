@@ -1,20 +1,42 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Dimensions, Text, Image } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome, FontAwesome5, Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
 import EStyleSheet, { create } from 'react-native-extended-stylesheet';
 import MapView, {Marker} from 'react-native-maps';
+import * as Location from 'expo-location';
 
-const Location  = ({ navigation }) => {
+const Locationn  = ({ navigation }) => {
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+  
+    useEffect(() => {
+      (async () => {
+        let { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+        }
+  
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+      })();
+    }, []);
+ 
+    let text = 'Waiting..';
+    if (errorMsg) {
+      text = errorMsg;
+    } else if (location) {
+      text = JSON.stringify(location);
+    }
 
     function findFriends() {
         console.log('find friends pressed')
     }
     const marker = {
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitude: location['coords']['latitude'],
+        longitude: location['coords']['longitude'],
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.05,
     }
 
     return(
@@ -50,7 +72,7 @@ const Location  = ({ navigation }) => {
 
 }
 
-export default Location;
+export default Locationn;
 
 const styles = EStyleSheet.create({
     mainContainer: {
