@@ -9,8 +9,9 @@ import io from "socket.io-client";
 export default function NotifSettings({ props }) {
     const [socketIo, setSocketIo] = useState();
     const [value, setValue] = useState(value); //brightness
-    const [colorHue, setColorHue] = useState(0);
-    const [colorSat, setColorSat] = useState(0);
+    const [hex, setHex] = useState(); //light hex value
+    const [hue, setColorHue] = useState(0);
+    const [sat, setColorSat] = useState(0);
     const [colorVal, setColorVal] = useState(1);
     const [intLight, setIntLight] = useState(false);
     const [colorPicker, setShowColorPicker] = useState(false);
@@ -37,24 +38,23 @@ export default function NotifSettings({ props }) {
     }
 
     const onSatValPickerChange = ( {saturation, value }) => {
-        setLightColor({
+        setLightColor({ // for async storage
             ...lightColor,
             saturation,
             value,
         });
-        // saturation = Math.floor(saturation * 100);
-        // value = Math.floor(value * 100)/2;
-        setColorSat(saturation);
-        setColorVal(value);
+        setColorSat(saturation); // colour picker display
+        setColorVal(value); // colour picker display
+        HSVtoRGB();
     };
     
     const onHuePickerChange = ({ hue }) => {
-        setLightColor({
+        setLightColor({ // for async storage
             ...lightColor,
             hue,
         });
-        hue = Math.floor(hue)
-        setColorHue(hue);
+        setColorHue(hue); // colour picker display
+        HSVtoRGB();
     };
     const onTimeChange = (time) => {
         setReactionTime(time);
@@ -62,21 +62,126 @@ export default function NotifSettings({ props }) {
         updateTimeoutAsyncStorage(time);
     };
 
+
+    function HSVtoRGB() {
+        var h = hue;
+        var s = sat*100;
+        var v = colorVal*100;
+
+        var r, g, b;
+        var i;
+        var f, p, q, t;
+         
+        // Make sure our arguments stay in-range
+        h = Math.max(0, Math.min(360, h));
+        s = Math.max(0, Math.min(100, s));
+        v = Math.max(0, Math.min(100, v));
+         
+        // We accept saturation and value arguments from 0 to 100 because that's
+        // how Photoshop represents those values. Internally, however, the
+        // saturation and value are calculated from a range of 0 to 1. We make
+        // That conversion here.
+        s /= 100;
+        v /= 100;
+         
+        if(s == 0) {
+            // Achromatic (grey)
+            r = g = b = v;
+            return [
+                Math.round(r * 255), 
+                Math.round(g * 255), 
+                Math.round(b * 255)
+            ];
+        }
+         
+        h /= 60; // sector 0 to 5
+        i = Math.floor(h);
+        f = h - i; // factorial part of h
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
+         
+        switch(i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+         
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+         
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+         
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+         
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+         
+            default: // case 5:
+                r = v;
+                g = p;
+                b = q;
+        }
+
+        r = Math.round(r * 255);
+        g = Math.round(g * 255);
+        b = Math.round(b * 255);
+        
+        RGBToHex(r,g,b);
+        
+        return [
+            Math.round(r * 255), 
+            Math.round(g * 255), 
+            Math.round(b * 255)
+        ];
+    }
+
+    //convert RGB > HEX
+    function RGBToHex(r, g, b) {
+        console.log("R " + r + " G " + g + " B " + b)
+        var r = r.toString(16);
+        var g = g.toString(16);
+        var b = b.toString(16);
+        
+        console.log(r ,g , b)
+      
+        if (r.length == 1)
+          r = "0" + r;
+        if (g.length == 1)
+          g = "0" + g;
+        if (b.length == 1)
+          b = "0" + b;
+      
+        setHex(r + g + b)
+        updateHexStorage(hex);
+
+        // return "#" + r + g + b;
+    }
+
+
     function saveColor() {
         var h = Math.floor(lightColor.hue)
         var s = Math.floor(lightColor.saturation * 100)
         var l = Math.floor(lightColor.value*100)/2
         var lightColorStr = JSON.stringify(h + "," + s + "," + l)
-        updateHueAsyncStorage(lightColorStr);
 
-        l /= 100;
-        const a = s * Math.min(l, 1 - l) / 100;
-        const f = n => {
-            const k = (n + h / 30) % 12;
-            const coolor = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-            return Math.round(255 * coolor).toString(16).padStart(2, '0'); 
-        };
-        socketIo.emit("color", { status: `#${f(0)}${f(8)}${f(4)}` });
+        updateHueAsyncStorage(lightColorStr);
+        socketIo.emit("color", { status: `#${hex}`});
     }
 
     const showColorPicker = () => {
@@ -123,6 +228,20 @@ export default function NotifSettings({ props }) {
             
             console.log("hue async updated successfully " + lightColor);
             fetchInfo();
+            return resolve(true);
+        } catch (e) {
+            return reject(e);
+        } 
+        }); 
+    };
+    function updateHexStorage(hex) {
+        return new Promise(async (resolve, reject) => {
+        try {
+            await AsyncStorage.removeItem('hex');
+
+            await AsyncStorage.setItem('hex', hex);
+            
+            console.log("hex color async updated successfully " + hex);
             return resolve(true);
         } catch (e) {
             return reject(e);
@@ -185,12 +304,11 @@ export default function NotifSettings({ props }) {
     useEffect(() => {
         fetchInfo();
         setSocketIo(
-          io("ws://localhost:3000", {
-            reconnectionDelayMax: 10000,
-          })
-        );
-        
-      }, []);
+            io("ws://localhost:3000", {
+              reconnectionDelayMax: 10000,
+            })
+          );
+    }, []);
     
     return (
     <KeyboardAvoidingView style={styles.keyboard} behavior="position" enabled>
@@ -246,17 +364,17 @@ export default function NotifSettings({ props }) {
                                 borderRadius:4, 
                                 borderColor: '#FFF0E3', 
                                 borderWidth: 1, 
-                                backgroundColor: `hsl(${colorHue},${colorSat}%,${colorVal}%)`, 
+                                backgroundColor: "#"+hex, 
                                 alignSelf: 'center'
                             }}
                         />
                     </View>
                     <HsvColorPicker
-                        huePickerHue={colorHue}
+                        huePickerHue={hue}
                         onHuePickerDragMove={onHuePickerChange}
                         onHuePickerPress={onHuePickerChange}
-                        satValPickerHue={colorHue}
-                        satValPickerSaturation={colorSat}
+                        satValPickerHue={hue}
+                        satValPickerSaturation={sat}
                         satValPickerValue={colorVal}
                         onSatValPickerDragMove={onSatValPickerChange}
                         onSatValPickerPress={onSatValPickerChange}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity, Dimensions, TextInput, ActivityIndicator, } from "react-native";
+import { Text, View, TouchableOpacity, Dimensions, TextInput, ActivityIndicator, Alert} from "react-native";
 import EStyleSheet, { create } from 'react-native-extended-stylesheet';
 import { Ionicons } from '@expo/vector-icons'; 
 import firebase from "firebase";
 import "@firebase/firestore";
+import { NavigationHelpersContext } from "@react-navigation/native";
 
 const AddContact = ({ navigation }) => {
     const [enableVerify, setEnableVerify] = useState(false);
@@ -90,6 +91,18 @@ const AddContact = ({ navigation }) => {
             phone: newContact.phone
         })
         .then(function() {
+            Alert.alert(
+                "Contact Saved",
+                `${newContact.name} was added to your contacts.`,
+                [
+                  {
+                    text: "Ok",
+                    onPress: () => navigation.navigate("Emergency Contacts"),
+                    style: "confirm"
+                  }
+                ],
+                { cancelable: false }
+              );
             console.log("Document updated successfully");
         })
         .catch(function(error) {
