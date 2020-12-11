@@ -6,7 +6,7 @@
 * [Setup](#setup)
 
 ## <a name="general-info">General Info</a>
-###v1
+### v1
 This app was created in conjunction with a smart purse called 'Aleo'. Aleo incorporates multiple electronic sensors into the design of a contemporary, small, day-purse. The bag boasts automatic interior LED lighting, GPS tracking, alarm system, and emergency SMS messaging. The Aleo App allows users to customize the light, alarm, and sms settings; edit account information; manage emergency contacts; and track your purse if it gets lost or stolen.
 
 ### v2 Plans
