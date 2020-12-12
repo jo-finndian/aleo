@@ -26,6 +26,8 @@ Lighting options include full spectrum RGB colours, brightness, and light patter
 * Socket.io
 
 ## <a name="setup">Setup</a>
+**IMPORTANT**: After cloning the repo, extract 'server.zip' and save to a separate folder – it cannot be run within the same project folder as the rest of the app.
+
 To run this project, you must have an [Expo](https://expo.io/) account. Once you have an Expo account, and Expo is installed on your machine, simply run:
 
 npm install
