@@ -4,8 +4,10 @@ import Slider from '@react-native-community/slider';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HsvColorPicker from 'react-native-hsv-color-picker';
 import EStyleSheet, { create } from 'react-native-extended-stylesheet';
+import io from "socket.io-client";
 
 export default function NotifSettings({ props }) {
+    const [socketIo, setSocketIo] = useState();
     const [value, setValue] = useState(value); //brightness
     const [hex, setHex] = useState(); //light hex value
     const [hue, setColorHue] = useState(0);
@@ -179,6 +181,7 @@ export default function NotifSettings({ props }) {
         var lightColorStr = JSON.stringify(h + "," + s + "," + l)
 
         updateHueAsyncStorage(lightColorStr);
+        socketIo.emit("color", { status: `#${hex}`});
     }
 
     const showColorPicker = () => {
@@ -300,6 +303,11 @@ export default function NotifSettings({ props }) {
 
     useEffect(() => {
         fetchInfo();
+        setSocketIo(
+            io("ws://localhost:3000", {
+              reconnectionDelayMax: 10000,
+            })
+          );
     }, []);
     
     return (
@@ -327,6 +335,7 @@ export default function NotifSettings({ props }) {
                     <Slider
                         value={value}
                         onValueChange={(val) => brightnessValueHandler(val)}
+                        onSlidingComplete={() => socketIo.emit("brightness", { status: value.toString() })}
                         style={styles.slider}
                         minimumValue={0}
                         maximumValue={100}
