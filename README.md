@@ -28,8 +28,16 @@ Lighting options include full spectrum RGB colours, brightness, and light patter
 ## <a name="setup">Setup</a>
 **IMPORTANT**: After cloning the repo, extract 'server.zip' and save to a separate folder – it cannot be run within the same project folder as the rest of the app.
 
-To run this project, you must have an [Expo](https://expo.io/) account. Once you have an Expo account, and Expo is installed on your machine, simply run:
+### Server Setup
+Install node via Homebrew with `brew install node`, navigate to the server folder, and run `node server.js`.
 
-npm install
-expo start
+### General Setup
+To run this project, you must have an [Expo](https://expo.io/) account.
 
+### Steps
+1. Save server.zip outside of main project folder.
+2. Set up and run server (see 'Server Setup').
+3. Navigate to project folder, and open a terminal window.
+4. Run `npm install`.
+5. Open your simulator of choice.
+6. In your terminal window run `expo start`, then `a` for Android, or `i` for iOS.
